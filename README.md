@@ -21,3 +21,15 @@ curl https://start.spring.io/starter.tgz \
 ```
 
 
+
+## React Site
+
+```bash
+yarn create react-app
+
+```
+
+## Gradle Plugins
+
+[Gradle-node](https://github.com/node-gradle/gradle-node-plugin/blob/master/docs/installation.md)
+
