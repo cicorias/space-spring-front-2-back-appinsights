@@ -36,7 +36,11 @@ test {
 	useJUnitPlatform()
 }
 
+// NOTE: this is the location where the react app is
+def webappPath = "${project.projectDir}/src/main/webapp"
+
 node {
+    // NOTE: see ;https://github.com/node-gradle/gradle-node-plugin/blob/3.1.0/docs/usage.md
     // Whether to download and install a specific Node.js version or not
     // If false, it will use the globally installed Node.js
     // If true, it will download node using above parameters
@@ -63,8 +67,6 @@ node {
     // Or set to null if you want to add the repository on your own.
     distBaseUrl = "https://nodejs.org/dist"
  
-		def webappPath = "${project.projectDir}/src/main/webapp"
-
     // The directory where Node.js is unpacked (when download is true) 
     workDir = file("${webappPath}/.gradle/nodejs")
     
@@ -89,21 +91,23 @@ node {
 def reactscripts = project.file('src/main/webapp/node_modules/.bin/react-scripts')
 
 task buildReactApp(type: NodeTask, group: 'reactApp', description: 'build the react app') {
-    script = reactscripts
-		// execOverrides {
-    // 	it.workingDir = 'src/main/webapp'
-		// }
-    args = ['build']
+  script = reactscripts
+  args = ['build']
+}
+
+task deployReactApp(type: Copy, group: 'reactApp', dependsOn: buildReactApp, description: 'dist to the static') {
+  from "${webappPath}/build"
+  into "${webappPath}/../../../build/resources/main/static"
 }
 
 task testReactApp(type: NodeTask, group: 'reactApp', description: 'test the react app') {
     script = reactscripts
-		// execOverrides {
-    // 	it.workingDir = 'src/main/webapp'
-		// }
     args = ['test', '--watchAll=false']
 }
 
+processResources.dependsOn buildReactApp
+//clean.delete << file('node_modules')
+clean.delete << file("${webappPath}/build")
 
 // TODO: these tasks create orphans that only can be killed via 'kill pid'
 // SEE: https://github.com/node-gradle/gradle-node-plugin/issues/65
@@ -113,4 +117,14 @@ task testReactApp(type: NodeTask, group: 'reactApp', description: 'test the reac
 //     	it.workingDir = 'src/main/webapp'
 // 		}
 //     args = ['start']
+// }
+
+// Note: after an eject you speak to webpack direct
+// task buildReactAppWebPack(type: NodeTask) {
+//   script = project.file('node_modules/webpack/bin/webpack.js')
+//   args = [
+//           '--mode', 'development',
+//           '--entry', './src/main/webapp/javascript/Main.jsx',
+//           '-o', './src/main/resources/static/dist'
+//   ]
 // }

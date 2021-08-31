@@ -33,3 +33,12 @@ yarn create react-app
 
 [Gradle-node](https://github.com/node-gradle/gradle-node-plugin/blob/master/docs/installation.md)
 
+
+
+## Buidling and Running
+
+```groovy
+./gradlew clean build && \
+./gradlew deployReactApp && \
+./gradlew bootRun
+```
