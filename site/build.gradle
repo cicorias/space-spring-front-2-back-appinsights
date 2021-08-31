@@ -13,6 +13,7 @@ configurations {
 	compileOnly {
 		extendsFrom annotationProcessor
 	}
+  agentlib
 }
 
 repositories {
@@ -30,12 +31,26 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
+  // https://mvnrepository.com/artifact/com.microsoft.azure/applicationinsights-agent
+  // implementation 'com.microsoft.azure:applicationinsights-agent:3.1.1'
+
+  agentlib 'com.microsoft.azure:applicationinsights-agent:3.1.1'
 }
 
 test {
 	useJUnitPlatform()
 }
 
+// ### AI
+task copyAgentLib(type: Copy) {
+    from configurations.agentlib
+    into "build/libs"
+}
+
+//bootJar.finalizedBy(copyAgentLib)
+//build.finalizedBy(copyAgentLib)
+
+// ### mostly node and react ###
 // NOTE: this is the location where the react app is
 def webappPath = "${project.projectDir}/src/main/webapp"
 
@@ -106,6 +121,8 @@ task testReactApp(type: NodeTask, group: 'reactApp', description: 'test the reac
 }
 
 processResources.dependsOn buildReactApp
+
+deployReactApp.finalizedBy(copyAgentLib)
 //clean.delete << file('node_modules')
 clean.delete << file("${webappPath}/build")
 
