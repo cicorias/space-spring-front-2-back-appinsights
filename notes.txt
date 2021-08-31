@@ -1,0 +1,6 @@
+https://github.com/srs/gradle-node-plugin/blob/master/docs/node.md#configuring-the-plugin
+
+https://github.com/node-gradle/gradle-node-plugin/tree/master/examples/simple-node
+
+
+https://andrew-flower.com/blog/Spring-Boot-and-React-1
